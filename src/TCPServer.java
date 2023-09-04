@@ -1,5 +1,3 @@
-package Opgave2;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -15,16 +13,15 @@ public class TCPServer {
 		Socket connectingClient = chatSocket.accept();
 		System.out.println("Connection from: " + connectingClient);
 
+		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectingClient.getInputStream()));
+		DataOutputStream outToClient = new DataOutputStream(connectingClient.getOutputStream());
+		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 
 		while (true) {
-			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectingClient.getInputStream()));
 			clientMsg = inFromClient.readLine();
 			System.out.println(clientMsg);
-			DataOutputStream outToClient = new DataOutputStream(connectingClient.getOutputStream());
-			BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 			outToClient.writeBytes(inFromUser.readLine() + '\n');
 		}
-
 	}
 
 }
