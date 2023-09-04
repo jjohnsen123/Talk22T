@@ -10,23 +10,40 @@ public class TCPServer {
 
 	public static void main(String[] args) throws Exception {
 
-		String clientSentence;
-		String serverSentence;
+		ServerSocket serverSocket = new ServerSocket(1024); // Serveren lytter på port 1024
 
-		ServerSocket welcomeSocket = new ServerSocket(1024);
-		Socket connectionSocket = welcomeSocket.accept();
-		System.out.println("Connection from: " + connectionSocket);
-		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-		
-		while(true){
-			serverSentence = inFromUser.readLine();
-			clientSentence = inFromClient.readLine();
-			System.out.println(clientSentence);
-			outToClient.writeBytes(serverSentence + '\n');
+		while (true) {
+			Socket clientSocket = serverSocket.accept();
+			System.out.println("Forbindelse fra: " + clientSocket);
+
+			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			DataOutputStream outToClient = new DataOutputStream(clientSocket.getOutputStream());
+
+			// Serveren tager initiativ til dialogen
+			outToClient.writeBytes("Vil du snakke med mig? (ja/nej)\n");
+			String response = inFromClient.readLine();
+
+			if (response != null && response.equalsIgnoreCase("ja")) {
+				outToClient.writeBytes("Dialogen er startet. Du kan begynde.\n");
+
+				while (true) {
+					String serverMessage = new BufferedReader(new InputStreamReader(System.in)).readLine();
+					outToClient.writeBytes(serverMessage + '\n');
+
+					String clientResponse = inFromClient.readLine();
+					System.out.println("Klientens svar: " + clientResponse);
+
+					if (serverMessage.equalsIgnoreCase("afslut") || clientResponse.equalsIgnoreCase("afslut")) {
+						break; // Afslut dialogen
+					}
+				}
+
+				outToClient.writeBytes("Dialogen er afsluttet. Farvel!\n");
+			} else {
+				outToClient.writeBytes("Dialogen blev ikke accepteret. Farvel!\n");
+			}
+
+			clientSocket.close();
 		}
-
 	}
-
 }
