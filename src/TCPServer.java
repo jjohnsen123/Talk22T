@@ -23,5 +23,4 @@ public class TCPServer {
 			outToClient.writeBytes(inFromUser.readLine() + '\n');
 		}
 	}
-
 }
