@@ -9,22 +9,20 @@ import java.net.Socket;
 public class TCPServer {
 
 	public static void main(String[] args) throws Exception {
+		ServerSocket chatSocket = new ServerSocket(1024);
+		String clientMsg;
 
-		String clientSentence;
-		String serverSentence;
+		Socket connectingClient = chatSocket.accept();
+		System.out.println("Connection from: " + connectingClient);
 
-		ServerSocket welcomeSocket = new ServerSocket(1024);
-		Socket connectionSocket = welcomeSocket.accept();
-		System.out.println("Connection from: " + connectionSocket);
-		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-		
-		while(true){
-			serverSentence = inFromUser.readLine();
-			clientSentence = inFromClient.readLine();
-			System.out.println(clientSentence);
-			outToClient.writeBytes(serverSentence + '\n');
+
+		while (true) {
+			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectingClient.getInputStream()));
+			clientMsg = inFromClient.readLine();
+			System.out.println(clientMsg);
+			DataOutputStream outToClient = new DataOutputStream(connectingClient.getOutputStream());
+			BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+			outToClient.writeBytes(inFromUser.readLine() + '\n');
 		}
 
 	}
