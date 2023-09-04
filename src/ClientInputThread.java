@@ -21,6 +21,5 @@ public class ClientInputThread extends Thread{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 }

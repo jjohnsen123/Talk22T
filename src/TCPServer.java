@@ -5,10 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPServer {
-
 	public static void main(String[] args) throws Exception {
 		ServerSocket chatSocket = new ServerSocket(1024);
-		String clientMsg;
 
 		Socket connectingClient = chatSocket.accept();
 		System.out.println("Connection from: " + connectingClient);
@@ -17,10 +15,9 @@ public class TCPServer {
 		DataOutputStream outToClient = new DataOutputStream(connectingClient.getOutputStream());
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 
-		while (true) {
-			clientMsg = inFromClient.readLine();
-			System.out.println(clientMsg);
-			outToClient.writeBytes(inFromUser.readLine() + '\n');
-		}
+		ServerInputThread sit = new ServerInputThread(connectingClient, inFromClient);
+		sit.start();
+		ServerOutputThread sot = new ServerOutputThread(connectingClient, inFromUser, outToClient);
+		sot.start();
 	}
 }

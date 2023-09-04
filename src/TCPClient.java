@@ -6,11 +6,8 @@ import java.net.Socket;
 
 
 public class TCPClient {
-
 	public static void main(String[] args) throws Exception, IOException {
 		Socket connectToChatSocket = new Socket("localhost", 1024);
-
-		String clientMsg;
 
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		DataOutputStream outToServer = new DataOutputStream(connectToChatSocket.getOutputStream());
@@ -18,11 +15,12 @@ public class TCPClient {
 
 		outToServer.writeBytes("Vil du snakke? Ja|Nej" + '\n');
 		System.out.println("Venter på svar fra den anden klient....");
-		clientMsg = inFromServer.readLine().toLowerCase();
-		if (!clientMsg.equals("ja")) {
+
+		if (!inFromServer.readLine().equalsIgnoreCase("ja")) {
 			System.out.println("Klient vil ikke snakke. Lukker forbindelsen");
 			connectToChatSocket.close();
 		}
+
 		ClientInputThread cit = new ClientInputThread(connectToChatSocket, inFromServer);
 		cit.start();
 		ClientOutputThread cot = new ClientOutputThread(connectToChatSocket, inFromUser, outToServer);
