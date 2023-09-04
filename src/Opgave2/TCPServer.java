@@ -9,19 +9,22 @@ import java.net.Socket;
 public class TCPServer {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		String clientSentence;
-		String capitalizedSentence;
-		ServerSocket welcomeSocket = new ServerSocket(6789);
+		String serverSentence;
+
+		ServerSocket welcomeSocket = new ServerSocket(1024);
+		Socket connectionSocket = welcomeSocket.accept();
+		System.out.println("Connection from: " + connectionSocket);
+		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 		
 		while(true){
-			Socket connectionSocket = welcomeSocket.accept();
-			System.out.println("Connection from: " + connectionSocket);
-			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+			serverSentence = inFromUser.readLine();
 			clientSentence = inFromClient.readLine();
-			capitalizedSentence = clientSentence.toUpperCase() + '\n';
-			outToClient.writeBytes(capitalizedSentence);
+			System.out.println(clientSentence);
+			outToClient.writeBytes(serverSentence + '\n');
 		}
 
 	}
