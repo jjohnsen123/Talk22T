@@ -1,4 +1,4 @@
-package V2_dns_udp_halvdelen_virker_virke;
+package V2_dns_udp_halvdelen_virker_ikke;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
